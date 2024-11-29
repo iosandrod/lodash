@@ -1,0 +1,148 @@
+export interface BoundingBox {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+export interface Split {
+    first: BoundingBox;
+    second: BoundingBox;
+}
+type MosaicDirection = any
+export function split(boundingBox: BoundingBox, relativeSplitPercentage: number, direction: MosaicDirection): Split {
+    const absolutePercentage = getAbsoluteSplitPercentage(boundingBox, relativeSplitPercentage, direction);
+    if (direction === 'column') {
+        return {
+            first: {
+                ...boundingBox,
+                bottom: 100 - absolutePercentage,
+            },
+            second: {
+                ...boundingBox,
+                top: absolutePercentage,
+            },
+        };
+    } else if (direction === 'row') {
+        return {
+            first: {
+                ...boundingBox,
+                right: 100 - absolutePercentage,
+            },
+            second: {
+                ...boundingBox,
+                left: absolutePercentage,
+            },
+        };
+    } else {
+        return assertNever(direction);
+    }
+}
+
+export function getAbsoluteSplitPercentage(
+    boundingBox: BoundingBox,
+    relativeSplitPercentage: number,
+    direction: MosaicDirection,
+): number {
+    const { top, right, bottom, left } = boundingBox;
+    if (direction === 'column') {
+        const height = 100 - top - bottom;
+        return (height * relativeSplitPercentage) / 100 + top;
+    } else if (direction === 'row') {
+        const width = 100 - right - left;
+        return (width * relativeSplitPercentage) / 100 + left;
+    } else {
+        return assertNever(direction);
+    }
+}
+export function assertNever(shouldBeNever: any): any {
+    throw new Error('Unhandled case: ' + JSON.stringify(shouldBeNever));
+}
+export function isParent(node: any) {
+    return node.direction != null
+}
+
+export function renderSplit(
+    direction: MosaicDirection,
+    boundingBox: BoundingBox,
+    splitPercentage: number,
+    path: any,
+) {
+
+}
+export function asStyles({ top, right, bottom, left }: BoundingBox) {
+    return {
+        top: `${top}%`,
+        right: `${right}%`,
+        bottom: `${bottom}%`,
+        left: `${left}%`,
+    };
+}
+export function renderRecursively(
+    node: any,
+    boundingBox: BoundingBox,
+    path: any,
+): any {
+    if (isParent(node)) {
+        const splitPercentage = node.splitPercentage == null ? 50 : node.splitPercentage;
+        const { first, second } = split(boundingBox, splitPercentage, node.direction);
+        // return flatten(
+        //     [
+        //         renderRecursively(node.first, first, path.concat('first')),
+        //         renderSplit(node.direction, boundingBox, splitPercentage, path),
+        //         renderRecursively(node.second, second, path.concat('second')),
+        //     ].filter(x => x != null),
+        // );
+        return [
+            renderRecursively(node.first, first, path.concat('first')),
+            renderSplit(node.direction, boundingBox, splitPercentage, path),
+            renderRecursively(node.second, second, path.concat('second')),
+        ].filter(x => x != null)
+    } else {
+        return asStyles(boundingBox)
+    }
+}
+const staticData = {
+    "direction": "row",
+    "first": {
+        "direction": "column",
+        "second": {
+            "direction": "row",
+            "second": {
+                "direction": "column",
+                "second": 6,
+                "first": 5,
+                "splitPercentage": 53.88127853881281
+            },
+            "first": 4
+        },
+        "first": 1
+    },
+    "second": {
+        "direction": "column",
+        "first": 2,
+        "second": 3
+    },
+    "splitPercentage": 40
+}
+
+// 示例边界框
+const boundingBox = {
+    top: 0,
+    right: 100,
+    bottom: 100,
+    left: 0,
+};
+
+// 使用示例数据和边界框进行分割
+// const splitResult = split(boundingBox, staticData.splitPercentage, staticData.direction);
+
+// console.log(splitResult);
+
+const res = renderRecursively(staticData, {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+}, [])
+
+console.log(JSON.stringify(res), 'testRes')//

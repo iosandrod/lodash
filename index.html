@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <style>
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+      position: relative;
+      animation: moveBox 2s infinite alternate; /* 应用动画 */
+    }
+
+    @keyframes moveBox {
+      0% {
+        inset: 0 0 0 0; /* 初始位置 */
+      }
+      100% {
+        inset: 100px 100px 0 0; /* 终止位置 */
+      }
+    }
+  </style>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    function flattenTree(node, parentInset = [0, 0, 100, 100], level = 0) {
+      if (!node) return []
+
+      const { direction, splitPercentage } = node
+      let inset
+
+      // 计算当前节点的 inset 属性
+      if (direction === 'horizontal') {
+        inset = [parentInset[0], parentInset[1], parentInset[2], parentInset[3] + splitPercentage]
+      } else {
+        inset = [parentInset[0] + splitPercentage, parentInset[1], parentInset[2], parentInset[3]]
+      }
+
+      const currentNode = {
+        id: node.id || `${level}-${Math.random()}`,
+        title: node.title || null,
+        style: {
+          position: 'absolute',
+          inset: `${inset[0]}% ${inset[1]}% ${inset[2]}% ${inset[3]}%`,
+        },
+      }
+
+      // 递归处理子节点
+      const firstChild = flattenTree(node.first, inset, level + 1)
+      const secondChild = flattenTree(node.second, inset, level + 1)
+
+      return [currentNode, ...firstChild, ...secondChild]
+    }
+
+    // 示例树结构
+    const tree = {
+      direction: 'horizontal',
+      splitPercentage: 50,
+      first: {
+        direction: 'vertical',
+        splitPercentage: 70,
+        first: { id: 'tile-1', title: 'Tile 1' },
+        second: { id: 'tile-2', title: 'Tile 2' },
+      },
+      second: {
+        direction: 'vertical',
+        splitPercentage: 30,
+        first: {
+          direction: 'horizontal',
+          splitPercentage: 60,
+          first: { id: 'tile-3', title: 'Tile 3' },
+          second: { id: 'tile-4', title: 'Tile 4' },
+        },
+        second: { id: 'tile-5', title: 'Tile 5' },
+      },
+    }
+
+    // 平铺树结构
+    const flatArray = flattenTree(tree)
+    console.log(flatArray, 'testArray')
+    // 渲染到页面
+    const container = document.createElement('div')
+    container.style.position = 'relative'
+    container.style.width = '400px'
+    container.style.height = '400px'
+    document.body.appendChild(container)
+
+    flatArray.forEach((node) => {
+      const tile = document.createElement('div')
+      tile.id = node.id
+      tile.textContent = node.title || 'Untitled'
+      tile.style = node.style
+      tile.style.backgroundColor = 'lightgray' // 设置背景颜色
+      tile.style.border = '1px solid black' // 设置边框
+      container.appendChild(tile)
+    })
+  </script>
+</html>

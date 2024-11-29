@@ -1,0 +1,14 @@
+{
+  "restartable": "rs",
+  "ignore": [".git", ".svn", "node_modules/**/node_modules"],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony",
+    "mjs": "node --harmony"
+  },
+  "watch": ["./*.ts", "./*.js", "./*.mjs", "./js/*.js"],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts-node js json mjs"
+}
