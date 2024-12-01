@@ -1,40 +1,33 @@
 import * as immer from 'immer'
 import { computed, isReactive, reactive, watchEffect } from 'vue'
 import { MongoClient } from 'mongodb'
+import { } from 'class-validator'
+import { } from 'class-transformer'//
 // import {} from ''
-//
-export function Log(options?: any) {
-    return function (target, p, decorator) {
-        let oldFn: Function = decorator.value
-        decorator.value = async function (...args) {
-            try {
-                await oldFn.apply(target, args)
-            } catch (error) {
-                console.log(error?.message || error)//
-            }
-        }
-    }
-}
-export function gs(options?: any) {
-    return function (target, p,) {
-    }
-}
-abstract class Base {
-    log: string
-    logName: Function
-}
-class User extends Base {
-    @gs({})
-    username: string
-    @Log({})
-    async setName(str: string) {//
-        // console.log(str, 'log')
-        return Promise.reject('aaa')
-    }
+//class-transformer
+import { plainToClass, Transform, Exclude, Expose } from 'class-transformer';
 
+class User {
+    @Expose()
+    name: string;
+
+    @Expose()
+    email: string;
+
+    @Transform(({ value }) => value.toUpperCase(), { toPlainOnly: true })
+    @Expose()
+    role: string;
+
+    constructor(name: string, email: string, role: string) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
+    }
 }
 
-let u = new User()
-console.log(u.log)
-u.setName('xiaofeng')
-u.setName('xiaoming')
+const user = new User('john Doe', 'john@example.com', 'admin');
+console.log(user);
+// 将类实例转换为普通对象时应用转换逻辑
+const plainObject = plainToClass(User, user);
+console.log(plainObject);  // 输出: { name: 'John Doe', email: 'john@example.com', role: 'ADMIN' }
+// role 被转换为大写字母

@@ -9,47 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gs = exports.Log = void 0;
 // import {} from ''
-//
-function Log(options) {
-    return function (target, p, decorator) {
-        let oldFn = decorator.value;
-        decorator.value = async function (...args) {
-            try {
-                await oldFn.apply(target, args);
-            }
-            catch (error) {
-                console.log(error?.message || error); //
-            }
-        };
-    };
-}
-exports.Log = Log;
-function gs(options) {
-    return function (target, p) {
-    };
-}
-exports.gs = gs;
-class Base {
-}
-class User extends Base {
-    async setName(str) {
-        // console.log(str, 'log')
-        return Promise.reject('aaa');
+//class-transformer
+const class_transformer_1 = require("class-transformer");
+class User {
+    constructor(name, email, role) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
     }
 }
 __decorate([
-    gs({}),
+    (0, class_transformer_1.Expose)(),
     __metadata("design:type", String)
-], User.prototype, "username", void 0);
+], User.prototype, "name", void 0);
 __decorate([
-    Log({}),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], User.prototype, "setName", null);
-let u = new User();
-console.log(u.log);
-u.setName('xiaofeng');
-u.setName('xiaoming');
+    (0, class_transformer_1.Expose)(),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    (0, class_transformer_1.Transform)(({ value }) => value.toUpperCase(), { toPlainOnly: true }),
+    (0, class_transformer_1.Expose)(),
+    __metadata("design:type", String)
+], User.prototype, "role", void 0);
+const user = new User('john Doe', 'john@example.com', 'admin');
+console.log(user);
+// 将类实例转换为普通对象时应用转换逻辑
+const plainObject = (0, class_transformer_1.plainToClass)(User, user);
+console.log(plainObject); // 输出: { name: 'John Doe', email: 'john@example.com', role: 'ADMIN' }
+// role 被转换为大写字母
