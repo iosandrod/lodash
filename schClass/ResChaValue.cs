@@ -8,7 +8,7 @@ namespace Algorithm
     /// 时间段
     /// </summary>
     [Serializable]
-    public class ResChaValue : IComparable, ICloneable,ISerializable
+    public class ResChaValue : IComparable, ICloneable, ISerializable
     {
         public SchData schData = null;        //所有排程数据
         public string cResourceNo = "";       //对应资源编号,要设置
@@ -71,7 +71,7 @@ namespace Algorithm
                 FResChaCycleValue = (int)drResource["FResChaCycleValue"] * 60;             //换产周期     分钟，统一转换成秒
                 FResChaRePlaceTime = (int)drResource["FResChaRePlaceTime"];           //平均更换耗时 秒
                 FResChaMemo = drResource["FResChaMemo"].ToString();                   //备注  
-                FSchSN = drResource["FSchSN"]== DBNull.Value? 0:(int)drResource["FSchSN"];                                   //按工艺特征，最优排产顺序
+                FSchSN = drResource["FSchSN"] == DBNull.Value ? 0 : (int)drResource["FSchSN"];                                   //按工艺特征，最优排产顺序
                 FUseFixedPlaceTime = drResource["FUseFixedPlaceTime"].ToString();     //是否固定更换耗时
                 FUseChaCycleValue = drResource["FUseChaCycleValue"].ToString();       //是否定期更换
 
@@ -92,14 +92,14 @@ namespace Algorithm
                 cDefine15 = (DateTime)drResource["cDefine15"];
                 cDefine16 = (DateTime)drResource["cDefine16"];
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 throw exp;
             }
         }
 
         //取工艺特征转换时间,从前一个工艺特征，转换到当前工艺特征;还要考虑生产过程的换刀时间 resource.GetChangeTime调用
-        public int GetChaValueChangeTime(SchProductRouteRes as_SchProductRouteRes, ResChaValue as_ResChaValuePre, int ai_workTime, ref int ai_cyctime, Boolean bSchdule,SchProductRouteRes as_SchProductRouteResPre)
+        public int GetChaValueChangeTime(SchProductRouteRes as_SchProductRouteRes, ResChaValue as_ResChaValuePre, int ai_workTime, ref int ai_cyctime, Boolean bSchdule, SchProductRouteRes as_SchProductRouteResPre)
         {
             int iChaValue = 0;
 
