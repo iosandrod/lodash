@@ -9,7 +9,6 @@ import {
   SchParam,
   Comparer,
   DateTime,
-  TimeRangeAttribute,
 } from './type'
 
 export class ResTimeRange implements IComparable<ResTimeRange>, ICloneable {
@@ -1714,13 +1713,14 @@ export class ResTimeRange implements IComparable<ResTimeRange>, ICloneable {
     }
   }
 
-  private attribute: TimeRangeAttribute
+  private attribute: any
 
-  get Attribute(): TimeRangeAttribute {
+  get Attribute(): any {
     return this.attribute
   }
 
-  set Attribute(value: TimeRangeAttribute) {
+  set Attribute(value: any) {
+    //
     this.attribute = value
   }
 

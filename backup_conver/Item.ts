@@ -2,7 +2,6 @@
 import { DataRow, SchData } from './type'
 export class Item {
   public schData: SchData | null = null // All scheduling data
-
   public iItemID: number // Material ID
   public cInvCode: string // Material code
   public cInvName: string // Material name

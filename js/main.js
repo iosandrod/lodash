@@ -33,7 +33,7 @@ async function tran(p3, p4) {
     const _arr = str.split('\n').map((v) => {
         return v.replace(/\r/g, '').replace(/\t/g, '');
     });
-    // console.log(_arr.length)
+    console.log(_arr.length);
     let _arr1 = _arr.filter((v, i) => {
         const regex = /^[^a-zA-Z\[\]\{\}\(\)]*\/\//i;
         if (regex.test(v)) {
@@ -48,13 +48,13 @@ async function tran(p3, p4) {
     });
     // console.log(_arr1.length) //
     let _arr2 = _arr1.join('\n');
-    console.log(_arr2.length);
+    // console.log(_arr1.length)
     // console.log(_arr2)
     // fs.writeFileSync(p1, _arr2)
 }
 async function test1(str11) {
-    const _cp = path.resolve(__dirname, '../backup');
-    let allFiles = await fs.readdirSync('../backup'); //
+    const _cp = path.resolve(__dirname, '../csMain');
+    let allFiles = await fs.readdirSync('../csMain'); //
     let allFiles1 = allFiles
         .map((v) => {
         return path.resolve(_cp, v);
@@ -72,18 +72,14 @@ async function test1(str11) {
         };
         return obj;
     });
-    // console.log(allFiles1)
     allFiles1.forEach(async (v) => {
         let a = v.a;
         let b = v.b;
         let c = v.c;
         if (!/1.ts$/.test(c)) {
-            let bf = await fs.readFileSync(c);
-            let s = bf.toString();
-            let np = c.replace(/backup/g, 'backup_conver'); //
-            // console.log(np)
-            // console.log(c)//
-            // fs.writeFileSync(np, s) //////
+            // let bf = await fs.readFileSync(c)
+            // let s = bf.toString()
+            // let np = c.replace(/backup/g, 'backup_conver') //
         }
         // console.log(bf)
         // if (/1.ts$/.test(c)) {
@@ -91,7 +87,7 @@ async function test1(str11) {
         // }
         // console.log(c)
         // fs.writeFileSync(c, '') //
-        // tran(a, b) //
+        tran(a, b); //
     });
     // let p =p3|| '../schClass/Resource.cs'
     // let p1 =p4|| '../schClass/Resource1.cs'
