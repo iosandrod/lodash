@@ -10,9 +10,9 @@ namespace Algorithm
     {
         public int FResourceID;     // 资源ＩＤ
 
-        public int FProductID;　　　// 产品ＩＤ
+        public int FProductID;// 产品ＩＤ
 
-        public int FProcessID;　　　// 产品工艺模型中的工序号
+        public int FProcessID;// 产品工艺模型中的工序号
 
         public float FEfficiency;   //效率
 
