@@ -1,0 +1,225 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql" // 或其他数据库类型，如 "postgresql", "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id              Int                 @id @default(autoincrement())
+  name            String
+  contactPerson   String
+  phone           String
+  email           String
+  address         String
+  accountBalance  Float               @default(0)
+  creditLimit     Float               @default(0)
+  status          String              @default("active")
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  salesOrders     SalesOrder[]
+  payments        CustomerPayment[]
+  feedbacks       CustomerFeedback[]
+}
+
+model SalesOrder {
+  id                 Int                 @id @default(autoincrement())
+  customerId         Int
+  orderDate          DateTime            @default(now())
+  deliveryDate       DateTime?
+  orderStatus        String
+  totalAmount        Float
+  paymentStatus      String
+  remarks            String?
+  createdBy          String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  customer           Customer            @relation(fields: [customerId], references: [id])
+  salesOrderDetails  SalesOrderDetail[]
+  invoices           Invoice[]
+  payments           CustomerPayment[]
+  salesReturns       SalesReturn[]
+  feedbacks          CustomerFeedback[]
+  discounts          Discount[]
+}
+
+model SalesOrderDetail {
+  id            Int       @id @default(autoincrement())
+  salesOrderId  Int
+  productId     Int
+  quantity      Int
+  unitPrice     Float
+  totalAmount   Float
+  discount      Float     @default(0)
+  tax           Float     @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  salesOrder    SalesOrder @relation(fields: [salesOrderId], references: [id])
+  product       Product    @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id              Int               @id @default(autoincrement())
+  name            String
+  sku             String
+  categoryId      Int
+  description     String?
+  price           Float
+  stockQuantity   Int
+  unit            String
+  status          String            @default("active")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  category        Category          @relation(fields: [categoryId], references: [id])
+  salesOrderDetails SalesOrderDetail[]
+  inventoryAlerts InventoryAlert[]
+}
+
+model Category {
+  id          Int         @id @default(autoincrement())
+  name        String
+  products    Product[]
+}
+
+model CustomerPayment {
+  id              Int       @id @default(autoincrement())
+  customerId      Int
+  paymentDate     DateTime  @default(now())
+  paymentAmount   Float
+  paymentMethod   String
+  orderId         Int?
+  remarks         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  customer        Customer  @relation(fields: [customerId], references: [id])
+  salesOrder      SalesOrder? @relation(fields: [orderId], references: [id])
+}
+
+model SalesReturn {
+  id              Int       @id @default(autoincrement())
+  salesOrderId    Int
+  returnDate      DateTime  @default(now())
+  totalAmount     Float
+  reason          String
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  salesOrder      SalesOrder @relation(fields: [salesOrderId], references: [id])
+}
+
+model DeliveryOrder {
+  id              Int       @id @default(autoincrement())
+  salesOrderId    Int
+  deliveryDate    DateTime  @default(now())
+  deliveryStatus  String
+  deliveryAddress String
+  totalWeight     Float
+  deliveryMethod  String
+  remarks         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  salesOrder      SalesOrder @relation(fields: [salesOrderId], references: [id])
+}
+
+model SalesReport {
+  id               Int       @id @default(autoincrement())
+  dateRangeStart   DateTime
+  dateRangeEnd     DateTime
+  totalSales       Float
+  totalOrders      Int
+  totalReturns     Float
+  totalDiscount    Float
+  totalTax         Float
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Invoice {
+  id              Int       @id @default(autoincrement())
+  salesOrderId    Int
+  invoiceDate     DateTime  @default(now())
+  totalAmount     Float
+  taxAmount       Float
+  invoiceNumber   String
+  paymentStatus   String 
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  salesOrder      SalesOrder @relation(fields: [salesOrderId], references: [id])
+}
+
+model Discount {
+  id              Int       @id @default(autoincrement())
+  salesOrderId    Int
+  discountType    String
+  discountValue   Float
+  description     String?
+  validFrom       DateTime
+  validUntil      DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  salesOrder      SalesOrder @relation(fields: [salesOrderId], references: [id])
+}
+
+model SalesRep {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String
+  phone             String
+  assignedOrdersCount Int     @default(0)
+  totalSales        Float     @default(0)
+  status            String    @default("active")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  salesRegions      SalesRegion[]
+}
+
+model CustomerFeedback {
+  id              Int       @id @default(autoincrement())
+  customerId      Int
+  orderId         Int
+  feedbackDate    DateTime  @default(now())
+  rating          Int
+  comments        String?
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  customer        Customer  @relation(fields: [customerId], references: [id])
+  salesOrder      SalesOrder @relation(fields: [orderId], references: [id])
+}
+
+model Promotion {
+  id              Int       @id @default(autoincrement())
+  name            String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  discountType    String
+  discountValue   Float
+  status          String    @default("active")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SalesRegion {
+  id          Int       @id @default(autoincrement())
+  name        String
+  managerId   Int
+  territory   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  manager     SalesRep  @relation(fields: [managerId], references: [id])
+}
+
+model InventoryAlert {
+  id              Int       @id @default(autoincrement())
+  productId       Int
+  alertLevel      String
+  threshold       Int
+  alertDate       DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  product         Product   @relation(fields: [productId], references: [id])
+}
+ //库存 

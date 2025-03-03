@@ -89,3 +89,331 @@ async function test1(str11?: any) {
   // fs.writeFileSync(p1, _arr2)
 }
 test1() //
+
+
+async function connectPg() {
+  const url = 'postgres://postgres:123456@localhost:5432/postgres'
+  let db = new Pool({
+    connectionString: url,
+  }) //
+  await db.connect()
+  // console.log(db.query('select * from "User"'))
+  // let data=await db.query('select * from "user"')
+  // let client = new PoolClient({
+  //   url: url 
+  // })
+  // await client.connect()
+  // let client =new pg.Client({
+  //   url: url,
+  // })
+  // console.log(client)
+  // console.log(Object.keys(client))
+  // const client = new MongoClient(url)
+  // await client.connect()
+  // console.log('Connected successfully to server')
+  // return client
+}
+
+connectPg()
+async function main() {
+  console.log('123')
+  //@ts-ignore
+  // const users = await prisma.user.findMany()
+  // console.log(users) //
+  // let Post =prisma.post
+  // console.log(Post)
+  // let t = await prisma.post.findMany() //
+  // console.log(t)////
+}
+
+main()
+datasource sqlite {
+  url               = "postgres://postgres:123456@localhost:5432/postgres/db"
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  provider          = "postgres"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id               String  @id @default(cuid())
+  content          String?
+  rating           Int?
+  feedback         String?
+  pair_left        String?
+  pair_right       String?
+  pairNested_left  String?
+  pairNested_right String?
+  pairJson         String?
+}
+
+
+model User {
+  id               String  @id @default(cuid())
+  content          String?
+  rating           Int?
+  feedback         String?
+  pair_left        String?
+  pair_right       String?
+  pairNested_left  String?
+  pairNested_right String?
+  pairJson         String?
+}
+
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = "mongodb://localhost:27017/chat"
+// }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = "mongodb://localhost:27017/chat"
+// }
+// datasource db {
+//   provider = "postgresql"
+//   url      = "postgres://postgres:123456@localhost:5432/postgres/db"
+// }w
+
+
+这个游戏有很多地图
+
+这个游戏可以购买
+
+敌方五个猪
+类似
+
+
+//give me my money back bro
+//
+//the poker game last night
+//you took me 60k
+//我们认识吗，
+//you took 60k from me by playing shitty betting
+//我没有印象
+//我都是正常游戏
+//yeah i got no impression to you but i need that freakin 60k
+//我仓库剩下不多了
+//I don't have much left in storage
+// let url=`mongodb://localhost:27017/chat`
+// let url=`mongodb://localhost:27017/`
+// async function main() {
+//   const client = await connectMon(url)
+//   // const db = client.db('chat')
+// }//
+// main()
+//鼓励
+//这个游戏有两个阵营，一个是警察，一个是恐怖分子
+
+// const Bull = require('bull');
+// console.log(Bull,'testAA')
+// 创建一个队列，命名为 'file-upload'
+//const queue = new Bull('my-queue', 'redis://:123456@127.0.0.1:6379');
+
+
+const uploadQueue = new Bull('file-upload', 'redis://:123456@127.0.0.1:6379');
+// console.log(uploadQueue,'tes')   
+// 创建并发处理任务
+uploadQueue.process(5, async (job) => {
+  // console.log(`处理文件上传: ${job.data.fileName}`);
+  // 模拟文件处理的异步操作
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  console.log(`文件上传完成: ${job.data.fileName}`);
+  return { success: true };
+});
+
+// 添加任务到队列
+const addTask = async (fileName) => {
+  await uploadQueue.add({ fileName });
+};
+// 模拟添加多个文件上传任务
+(async () => {
+  for (let i = 1; i <= 10; i++) {
+    addTask(`file${i}.txt`);
+  }//
+})();
+
+
+
+const connect = knex({
+    client: 'pg',
+    connection: {
+      host: 'localhost',
+      port: 5432,
+      user: 'postgres',
+      password: '123456',
+      database: 'ndb'
+    }
+  })
+  // console.log(123)
+  // console.log(connect)
+  // console.log(connect)
+  let d = await connect.select('*').from('User')
+  console.log(d.length)
+  let d1 = await connect.__knex__
+  // let c=connect.client
+  console.log(d1)
+  // console.log(c)
+
+
+
+  const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Socket.IO server');
+  });
+
+  // 创建一个 Socket.IO 实例，绑定到 HTTP 服务器
+  const io = new Server(server,{
+    path:"chat",//
+    
+  });
+  io.on('connection', async (data) => {
+    console.log('some one is connect')//
+  })
+  // 创建 /chat 命名空间
+  // const chatNamespace = io.of('/chat');
+  let chatNamespace=io
+  chatNamespace.on('connection', (socket: Socket) => {
+    console.log('User connected to /chat');
+    socket.send('skldfjsdlfjldks')//
+    socket.on('message', (msg: string) => {
+      console.log(`Message in /chat: ${msg}`);
+      socket.emit('message', 'Message received in /chat');
+    });
+    // setInterval(() => {
+    //   socket.emit('message','skjfdlskfjdsl')//
+    // }, 1000);
+    socket.on('disconnect', () => {
+      console.log('User disconnected from /chat');
+    });
+  });
+
+  // 创建 /notifications 命名空间
+  const notificationsNamespace = io.of('/notifications');
+  notificationsNamespace.on('connection', (socket: Socket) => {
+    console.log('User connected to /notifications');
+
+    socket.on('subscribe', (topic: string) => {
+      console.log(`Subscribed to topic: ${topic}`);
+      socket.emit('subscribed', `Subscribed to ${topic}`);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('User disconnected from /notifications');
+    });
+  });
+
+  // 启动 HTTP 服务器，监听端口 3000
+  server.listen(3000, () => {
+    console.log('Server is listening on port 3000');
+    // setInterval(() => {
+    //   chatNamespace.send('hello word')
+    // }, 1000);
+  });
+
+
+
+  export * from 'feathers-chat'
+// 创建一个 Nodemailer 邮件发送器
+const transporter = nodemailer.createTransport({
+  service: 'qq', // 邮箱服务商，QQ 邮箱
+  auth: {
+    user: '1151685410@qq.com',  // 你的 QQ 邮箱地址
+    pass: 'pwixtwwyfhfihfcg',     // 你的 QQ 邮箱授权码（不是邮箱密码）
+  },
+});
+
+// 定义邮件发送的类型
+interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  text: string;
+}
+
+// 发送邮件的函数
+// const sendEmail = async (to: string, subject: string, text: string): Promise<void> => {
+//   const mailOptions: MailOptions = {
+//     from: '1151685410@gmail.com',   // 发件人邮箱地址
+//     to: to,                      // 收件人邮箱地址
+//     subject: subject,            // 邮件主题
+//     text: text,                  // 邮件内容
+//   };
+
+//   try {
+//     const info = await transporter.sendMail(mailOptions);
+//     console.log('邮件发送成功:', info.response);
+//   } catch (error) {
+//     console.error('邮件发送失败:', error);
+//   }
+// };
+
+// 示例：发送邮件
+// sendEmail('1151685410@qq.com', '测试邮件', '这是通过 Nodemailer 发送的测试邮件！');
+
+
+// console.log(Object.keys(client))//
+  // console.log(client,'testClient')
+  // console.log(Object.keys(connection))//
+  // let service=connection.service('user')
+  // console.log(service)
+  // const client = createClient(connection)
+  // client.on('connect', () => {
+  //   console.log('连接成功')
+  // })
+  // client.on('connection', () => {
+  //   console.log('连接成功')
+  // })  
+  // client.authenticate({
+  //   strategy: 'local',
+  //   email:'1',
+  //   password:''
+  // }).then(res=>{
+
+  // }).catch(err=>{//
+  //   // console.log('发生了错误',err.message)//
+  // })  
+  // client.service('users').create({
+  //   email:'1151685410@qq.com',
+  //   password:'123456',//
+  // }).then(res=>{//
+  //   console.log(res)//
+  // }).catch(err=>{//
+  //   console.log('发生了错误',err.message)//
+  // })
+  // let create=client.service('users').create.toString()
+  // console.log(create)
+  // let users=client.service('users')
+  // console.log(Object.keys(users))
+
+
+  // async function connectMon(url) {
+//   mongoose.connect(url)
+//   const connection = mongoose.connection;
+
+//   connection.on('connected', () => {
+//     console.log('MongoDB connected successfully');
+//   })
+
+//   connection.on('error', (err) => {
+//     console.log('MongoDB connection error:', err);
+//   })
+//   // console.log(m)
+//   // const client = new MongoClient(url)
+//   // await client.connect()
+//   // console.log('Connected successfully to server')
+//   // return client
+// }
+
+// import knex from 'knex'
+// async function main() {
+//   setInterval(() => {
+//     // const connection = socketio(io('http://localhost:3030'))
+//     // console.log(connection, 'connection')//
+//     // return //
+//   }, 1000);
+// }
+// main()

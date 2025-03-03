@@ -6,9 +6,10 @@
     "js": "node --harmony",
     "mjs": "node --harmony"
   },
-  "watch": ["./*.ts", "./*.js", "./*.mjs", "./js/*.js"],
+  "watch": ["./*.ts", "./*.js", "./*.mjs", "./js/*.js","./*.cs"],
   "env": {
     "NODE_ENV": "development"
   },
-  "ext": "ts-node js json mjs"
+  "ext": "cs",
+  "exec":"dotnet script main.cs"
 }
